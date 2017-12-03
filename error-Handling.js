@@ -1,6 +1,6 @@
 module.exports = {
-  friendlyName: 'ORM Error Handling',
-  description: 'Handles the Sails ORM error codes gracefully.',
+  friendlyName: 'Error Handling',
+  description: 'Handles the application error codes gracefully.',
   sync: true,
 
   inputs: {
@@ -21,8 +21,11 @@ module.exports = {
     }
   },
   fn ({err, res, caller}, {success}) {
-    let msg = `[${caller}] ${err.name}: ${err.details}`
+    let msg = `Handling [${caller}] ${err.name}: ${err.details}`
+    let request = res.badRequest
     let message
+
+    sails.log.verbose(msg)
 
     switch (err.code) {
       case 'E_INVALID_VALUES_TO_SET':
@@ -38,7 +41,7 @@ module.exports = {
         break
     }
 
-    sails.log.error(msg, message)
-    return success(res.badRequest(message))
+    sails.log.silly(request, message)
+    return success(request(message))
   }
 }

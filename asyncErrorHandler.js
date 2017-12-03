@@ -11,7 +11,7 @@ module.exports = function asyncErrorHandler (action, controller) {
     try {
       await action(req, res, next)
     } catch (err) {
-      sails.log.error(`Handling encountered error ${err.code}.`)
+      sails.log.error(`Encountered error ${err.code}.`)
       return sails.helpers.errorHandling({caller, err, res}).execSync()
     }
   }
