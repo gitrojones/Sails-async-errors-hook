@@ -25,14 +25,16 @@ specific error (response type, message).
 
 ## Error format
 
-{
+`{
         name: 'SampleException',
         code: 'E_SAMPLE_EXCEPTION',
         details: 'User friendly information.' 
-}
+}`
 
 Name - The sails.errors key
+
 Code - Switch value, used to avoid clobber
+
 Details - By default, the message returned within the response
 
 Default response is a res.badRequest response. Can be customized per exception
