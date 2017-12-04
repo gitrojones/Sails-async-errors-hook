@@ -22,8 +22,9 @@ module.exports = {
   },
   fn ({err, res, caller}, {success}) {
     let msg = `Handling [${caller}] ${err.name}: ${err.details}`
+
     let request = res.badRequest
-    let message
+    let message = err.details
 
     sails.log.verbose(msg)
 
