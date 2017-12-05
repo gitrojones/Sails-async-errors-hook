@@ -1,5 +1,5 @@
 module.exports = function asyncErrorHandler (action, controller) {
-  sails.log.verbose('Initialized asyncErrorHandler (HTTP Middleware).\n\tController (' +
+  sails.log.silly('Initialized asyncErrorHandler (HTTP Middleware).\n\tController (' +
                   controller + ') errors are being handled.')
 
   return async function (req, res, next) {

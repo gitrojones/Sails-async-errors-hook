@@ -47,30 +47,28 @@ async function hoistedErrorDirectory() {
     // We have files to process
     sails.log.silly('Hoisting the following files:', errorFileNames)
     let errors = {}
-
-    for (let file of errorFileNames) {
-      if (!file.match(/.+Exception\.js/)) continue
+    let errorFiles = errorFileNames.reduce((promises, file) => {
+      if (!file.match(/.+Exception\.js/)) return
       let filePath = errorDir + '/' + file
-      let data
 
-      try {
-        data = eval(
-          await new Promise((resolve, reject) => fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) reject(err)
-            return resolve(data)
-          }))
-        )
-      } catch (err) {
-        sails.log.error(`Failed to load error file ${file}. Details:\n\n${err}`)
-      }
+      promises.push(new Promise((resolve, reject) => {
+        fs.readFile(filePath, 'utf8', (err, data) => {
+          if (err) reject(err)
+          resolve(eval(data))
+        })
+      }))
 
+      return promises
+    }, [])
+
+    _.forEach(await Promise.all(errorFiles), (data) => {
       if (_.has(data, 'name')) {
         errors[data.name] = ErrorWrapper(data)
-        sails.log.silly('Successfully loaded custom error', file)
-      } else sails.log.error('Expected exception to define "name". Skipping', file)
-    }
+        sails.log.silly('Successfully loaded custom error', data.name)
+      } else sails.log.error('Expected exception to define "name". Skipping', data)
+    })
 
-    sails.log.verbose('Registered the following custom exceptions:', errors)
+    sails.log.silly('Registered the following custom exceptions:', errors)
     return errors
   } else sails.log.error('No errors to hoist. Ensure the /api/errors directory exists.',
     'See documentation for more details.')
